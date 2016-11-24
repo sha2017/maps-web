@@ -149,24 +149,29 @@
             props = e.selected[0].getProperties();
             var html = 'Layer: ' + props['layer'] + "<br>Handle: 0x" + props['entityhandle'] + "<br>";
             
-		var wikiData = $.getJSON(wikiDataUrl + props['entityhandle'], function(data) {
-			if(Object.keys(data.query.results).length == 0) {
-				html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
-				html += "<pre>{{MapObject\n|Name = OBJECT NAME\n|Handle = 0x" + props['entityhandle'] + "\n|Summary = SUMMARY OF THIS OBJECT THAT IS SHOWN HERE.\n}}</pre>";
-			} else {
-				html = "";
-				$.each(data.query.results, function(index, item) {
-					if('printouts' in item) {
-						html += "<a href='" + item.fullurl + "' target='_new'>" + item.fulltext + "</a><br>";
-						html += item.printouts.Summary[0].fulltext + "<br>";
-					}
-				});
+		$.ajax(wikiDataUrl + props['entityhandle'], {
+			dataType: "json",
+			success: function(data) {
+				if(Object.keys(data.query.results).length == 0) {
+					html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
+					html += "<pre>{{MapObject\n|Name = OBJECT NAME\n|Handle = 0x" + props['entityhandle'] + "\n|Summary = SUMMARY OF THIS OBJECT THAT IS SHOWN HERE.\n}}</pre>";
+				} else {
+					html = "";
+					$.each(data.query.results, function(index, item) {
+						if('printouts' in item) {
+							html += "<a href='" + item.fullurl + "' target='_new'>" + item.fulltext + "</a><br>";
+							html += item.printouts.Summary[0].fulltext + "<br>";
+						}
+					});
+				}
+				content.innerHTML = html;
+				overlay.setPosition(coordinate);
+			},
+			error: function() {
+				content.innerHTML = html + "<p>Wiki-data is currently unavailable</p>";
+				overlay.setPosition(coordinate);
 			}
-			content.innerHTML = html;
 		});
-		
-            content.innerHTML = html;
-            overlay.setPosition(coordinate);
           }
           clickAction.getFeatures().clear()
         });
