@@ -1,4 +1,6 @@
 config.json
+vector_layers.json
+vector/
 csv
 csv-old
 kml

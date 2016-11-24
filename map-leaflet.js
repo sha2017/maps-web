@@ -20,7 +20,7 @@ function initMap() {
     var overlayMaps = {};
 
     config.layers.forEach(function(layerName) {
-        var layer = L.tileLayer(config.base_url + '/' + layerName + '/{z}/{x}/{y}.png',{
+        var layer = L.tileLayer('/tiles/' + layerName + '/{z}/{x}/{y}.png',{
             minZoom: config.zoom_range[0],
             maxZoom: config.zoom_range[1],
             bounds: bounds,
@@ -99,7 +99,7 @@ function onGeoJSONFeature(feature, layer) {
 function addVectorLayers(layer_data) {
     console.log(layer_data);
     $.each(layer_data, function(index, layer) {
-        $.getJSON(layer.source, function(data) {
+        $.getJSON('/vector/' + layer.source, function(data) {
             addGeoJSON(data, layer.name);
         });
     });
