@@ -57,6 +57,11 @@ function createMap(config) {
       });
       overlay_layers.getLayers().push(layer);
     });
+
+    // The <canvas> element doesn't seem to get sized correctly
+    // on page load, which causes vector element hover to break.
+    // Update the size after a small delay.
+    setTimeout( function() { map.updateSize();}, 50);
 }
 
 function generateStyle(style) {
