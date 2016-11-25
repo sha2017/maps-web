@@ -110,8 +110,9 @@ function addPopupActions(map) {
         var coordinate = e.mapBrowserEvent.coordinate;
         props = e.selected[0].getProperties();
         var html = '<strong>Layer:</strong> ' + props['layer'] + "<br><strong>Handle:</strong> 0x" + props['entityhandle'] + "<br>";
-
+        content.innerHTML = html;
         overlay.setPosition(coordinate);
+
         var url = wikiDataUrl + props['entityhandle'];
         $.ajax(url, {
           dataType: "jsonp",
