@@ -59,8 +59,41 @@ function createMap(config) {
     });
 }
 
+function generateStyle(style) {
+  data = {}
+  if ("line-color" in style) {
+    data['stroke'] = new ol.style.Stroke({
+      color: style['line-color'],
+      width: style['line-width']
+    });
+  }
+
+  if ("polygon-fill" in style) {
+    data['fill'] = new ol.style.Fill({
+      color: style['polygon-fill']
+    });
+  }
+
+  if ("z-index" in style) {
+    data['zIndex'] = style['z-index'];
+  }
+  return new ol.style.Style(data);
+}
+
 function addVectorLayers(layer_data) {
-    $.each(layer_data, function(index, layer) {
+
+    function styleFunction(feature) {
+      var props = feature.getProperties();
+      for (var rule in layer_data.styles) {
+        for (var key in layer_data.styles[rule]['match']) {
+          if (key in props && props[key] == layer_data.styles[rule]['match'][key]) {
+            return generateStyle(layer_data.styles[rule]['style']);
+          }
+        }
+      }
+    }
+
+    $.each(layer_data.layers, function(index, layer) {
         var vectorSource = new ol.source.Vector({
             url: 'vector/' + layer.source,
             format: new ol.format.GeoJSON()
@@ -69,7 +102,7 @@ function addVectorLayers(layer_data) {
         var vectorLayer = new ol.layer.Vector({
             title: layer.name + " (vector)",
             source: vectorSource,
-              style: styleFunction,
+            style: styleFunction,
             updateWhileAnimating: !isMobile(),
             updateWhileInteracting: !isMobile()
             });
