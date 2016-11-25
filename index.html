@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="http://openlayers.org/en/v3.19.1/css/ol.css" type="text/css">
-    <link rel="stylesheet" href="/css/ol3-layerswitcher.css" type="text/css">
-    <link rel="stylesheet" href="/css/main.css" type="text/css">
+    <link rel="stylesheet" href="css/ol3-layerswitcher.css" type="text/css">
+    <link rel="stylesheet" href="css/main.css" type="text/css">
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://openlayers.org/en/v3.19.1/build/ol.js" type="text/javascript"></script>
-    <script src="/js/ol3-layerswitcher.js" type="text/javascript"></script>
+    <script src="js/ol3-layerswitcher.js" type="text/javascript"></script>
     <script src="styles.js" type="text/javascript"></script>
     <title>SHA2017 Map</title>
     <style>
@@ -33,7 +33,7 @@
         <div id="popup-content">asdfasdfasdfasdf</div>
       </div>
     </div>
-    <script>
+    <script type="text/javascript">
     function isMobile() {
         try{ document.createEvent("TouchEvent"); return true; }
         catch(e){ return false; }
@@ -41,8 +41,13 @@
     var map, base_layers, overlay_layers;
 
     $(function() {
-      $.getJSON('/config.json', createMap);
+      $.getJSON('config.json', createMap);
     });
+    
+    var wikiUrl = "https://orga.sha2017.org/";
+    var wikiDataUrl = "wikidata.php?handle=";
+    // Direct access to the wiki is possible if the wiki allows Cross-Origin Requests.
+    //var wikiDataUrl = wikiUrl + "api.php?action=askargs&printouts=Summary&format=json&conditions=Handle::0x";
 
     function createMap(config) {
         base_layers = new ol.layer.Group({
@@ -77,13 +82,13 @@
         var layerSwitcher = new ol.control.LayerSwitcher();
         map.addControl(layerSwitcher);
 
-        $.getJSON('/vector_layers.json', addVectorLayers);
+        $.getJSON('vector_layers.json', addVectorLayers);
 
         config.layers.forEach(function(layerName) {
           var layer = new ol.layer.Tile({
             title: layerName,
             source: new ol.source.XYZ({
-              url: '/tiles/' + layerName + '/{z}/{x}/{y}.png'
+              url: 'tiles/' + layerName + '/{z}/{x}/{y}.png'
             }),
             minZoom: config.zoom_range[0],
             maxZoom: config.zoom_range[1]
@@ -95,7 +100,7 @@
     function addVectorLayers(layer_data) {
         $.each(layer_data, function(index, layer) {
             var vectorSource = new ol.source.Vector({
-                url: '/vector/' + layer.source,
+                url: 'vector/' + layer.source,
                 format: new ol.format.GeoJSON()
             });
 
@@ -142,8 +147,31 @@
           if (e.selected.length > 0){
             var coordinate = e.mapBrowserEvent.coordinate;
             props = e.selected[0].getProperties();
-            content.innerHTML = 'Layer: ' + props['layer'] + "<br>Handle: 0x" + props['entityhandle'];
-            overlay.setPosition(coordinate);
+            var html = 'Layer: ' + props['layer'] + "<br>Handle: 0x" + props['entityhandle'] + "<br>";
+            
+		$.ajax(wikiDataUrl + props['entityhandle'], {
+			dataType: "json",
+			success: function(data) {
+				if(Object.keys(data.query.results).length == 0) {
+					html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
+					html += "<pre>{{MapObject\n|Name = OBJECT NAME\n|Handle = 0x" + props['entityhandle'] + "\n|Summary = SUMMARY OF THIS OBJECT THAT IS SHOWN HERE.\n}}</pre>";
+				} else {
+					html = "";
+					$.each(data.query.results, function(index, item) {
+						if('printouts' in item) {
+							html += "<a href='" + item.fullurl + "' target='_new'>" + item.fulltext + "</a><br>";
+							html += item.printouts.Summary[0].fulltext + "<br>";
+						}
+					});
+				}
+				content.innerHTML = html;
+				overlay.setPosition(coordinate);
+			},
+			error: function() {
+				content.innerHTML = html + "<p>Wiki-data is currently unavailable</p>";
+				overlay.setPosition(coordinate);
+			}
+		});
           }
           clickAction.getFeatures().clear()
         });
