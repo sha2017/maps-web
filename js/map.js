@@ -46,14 +46,16 @@ function createMap(config) {
 
     $.getJSON('vector_layers.json', addVectorLayers);
 
-    config.layers.forEach(function(layerName) {
+    config.layers.forEach(function(layer) {
       var layer = new ol.layer.Tile({
-        title: layerName,
+        title: layer.name,
+        visible: layer.visible,
         source: new ol.source.XYZ({
-          url: 'tiles/' + layerName + '/{z}/{x}/{y}.png'
+          url: 'tiles/' + layer.path + '/{z}/{x}/{y}.png'
         }),
         minZoom: config.zoom_range[0],
         maxZoom: config.zoom_range[1]
+
       });
       overlay_layers.getLayers().push(layer);
     });
@@ -107,6 +109,7 @@ function addVectorLayers(layer_data) {
         var vectorLayer = new ol.layer.Vector({
             title: layer.name + " (vector)",
             source: vectorSource,
+            visible: layer.visible,
             style: styleFunction,
             updateWhileAnimating: !isMobile(),
             updateWhileInteracting: !isMobile()
