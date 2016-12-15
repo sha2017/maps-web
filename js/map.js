@@ -66,7 +66,7 @@ function createMap(config) {
     setTimeout( function() { map.updateSize();}, 50);
 }
 
-function generateStyle(style) {
+function generateStyle(style, props) {
   data = {}
   if ("line-color" in style) {
     data['stroke'] = new ol.style.Stroke({
@@ -84,6 +84,14 @@ function generateStyle(style) {
   if ("z-index" in style) {
     data['zIndex'] = style['z-index'];
   }
+
+  if ("text-color" in style && "text" in props) {
+    data['text'] = new ol.style.Text({
+      text: props['text'],
+      textAlign: 'center'
+    });
+  }
+
   return new ol.style.Style(data);
 }
 
@@ -94,7 +102,7 @@ function addVectorLayers(layer_data) {
       for (var rule in layer_data.styles) {
         for (var key in layer_data.styles[rule]['match']) {
           if (key in props && props[key] == layer_data.styles[rule]['match'][key]) {
-            return generateStyle(layer_data.styles[rule]['style']);
+            return generateStyle(layer_data.styles[rule]['style'], props);
           }
         }
       }
@@ -121,6 +129,12 @@ function addVectorLayers(layer_data) {
 }
 
 function addPopupActions(map) {
+    // Highlight element on hover:
+    var hoverAction = new ol.interaction.Select({condition: ol.events.condition.pointerMove});
+    map.addInteraction(hoverAction);
+
+    return;
+
     var container = document.getElementById('popup');
     var content = document.getElementById('popup-content');
     var closer = document.getElementById('popup-closer');
@@ -138,10 +152,6 @@ function addPopupActions(map) {
       closer.blur();
       return false;
     };
-
-    // Highlight element on hover:
-    var hoverAction = new ol.interaction.Select({condition: ol.events.condition.pointerMove});
-    map.addInteraction(hoverAction);
 
     // Display popup on click
     var clickAction = new ol.interaction.Select();
