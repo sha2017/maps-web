@@ -15,8 +15,8 @@ function createMap(config) {
     base_layers = new ol.layer.Group({
         title: 'Base Layers',
         layers: [
+            new ol.layer.Tile({ title: "Blank", type: 'base'}),
             new ol.layer.Tile({ title: "OSM", type: 'base', source: new ol.source.OSM() }),
-            new ol.layer.Tile({ title: "Blank", type: 'base'})
         ]
     });
 
@@ -25,8 +25,7 @@ function createMap(config) {
     });
 
     map = new ol.Map({
-        layers: [base_layers,
-                 overlay_layers],
+        layers: [base_layers, overlay_layers],
         target: 'map',
         controls: ol.control.defaults({
             attributionOptions: ({
@@ -66,7 +65,7 @@ function createMap(config) {
     setTimeout( function() { map.updateSize();}, 50);
 }
 
-function generateStyle(style, props) {
+function generateStyle(style, props, resolution) {
   data = {}
   if ("line-color" in style) {
     data['stroke'] = new ol.style.Stroke({
@@ -88,7 +87,10 @@ function generateStyle(style, props) {
   if ("text-color" in style && "text" in props) {
     data['text'] = new ol.style.Text({
       text: props['text'],
-      textAlign: 'center'
+      textAlign: 'center',
+      scale: props['text_size'] / 5 / resolution,
+      rotation: props['text_rotation'] !== undefined ? (-props['text_rotation'] / 180.0 * Math.PI) : 0,
+      rotateWithView: true,
     });
   }
 
@@ -97,12 +99,13 @@ function generateStyle(style, props) {
 
 function addVectorLayers(layer_data) {
 
-    function styleFunction(feature) {
+    function styleFunction(feature, resolution) {
+      console.log(resolution)
       var props = feature.getProperties();
       for (var rule in layer_data.styles) {
         for (var key in layer_data.styles[rule]['match']) {
           if (key in props && props[key] == layer_data.styles[rule]['match'][key]) {
-            return generateStyle(layer_data.styles[rule]['style'], props);
+            return generateStyle(layer_data.styles[rule]['style'], props, resolution);
           }
         }
       }
@@ -115,13 +118,13 @@ function addVectorLayers(layer_data) {
         });
 
         var vectorLayer = new ol.layer.Vector({
-            title: layer.name + " (vector)",
+            title: layer.name,
             source: vectorSource,
             visible: layer.visible,
             style: styleFunction,
             updateWhileAnimating: !isMobile(),
             updateWhileInteracting: !isMobile()
-            });
+        });
         overlay_layers.getLayers().push(vectorLayer);
     });
 
