@@ -31,7 +31,7 @@ function createMap(config) {
             attributionOptions: ({
               collapsible: false
              })
-         }),
+         }).extend([new ol.control.ScaleLine()]),
           view: new ol.View({
               center: (new ol.geom.Point([5.52579, 52.28488])).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
               zoom: 17,
