@@ -100,6 +100,7 @@ function generateStyle(style, props, resolution) {
 function addVectorLayers(layer_data) {
 
     function styleFunction(feature, resolution) {
+      console.log(resolution)
       var props = feature.getProperties();
       for (var rule in layer_data.styles) {
         for (var key in layer_data.styles[rule]['match']) {
@@ -135,7 +136,6 @@ function addPopupActions(map) {
     var hoverAction = new ol.interaction.Select({condition: ol.events.condition.pointerMove});
     map.addInteraction(hoverAction);
 
-return;
     var container = document.getElementById('popup');
     var content = document.getElementById('popup-content');
     var closer = document.getElementById('popup-closer');
@@ -161,15 +161,35 @@ return;
       if (e.selected.length > 0){
         var coordinate = e.mapBrowserEvent.coordinate;
         props = e.selected[0].getProperties();
-        var html = '<strong>Layer:</strong>&nbsp;' + props['layer'] + "<br><strong>Handle:</strong>&nbsp;0x" + props['entityhandle'] + "<br>";
-        for (attr in props) {
-          if (!['layer', 'entityhandle', 'geometry'].includes(attr) && props[attr] != null) {
-            html += '<strong>' + attr + ':</strong>&nbsp;' + props[attr] + '<br>';
-          }
-        }
+        var html = '<strong>Layer:</strong> ' + props['layer'] + "<br><strong>Handle:</strong> 0x" + props['entityhandle'] + "<br>";
         content.innerHTML = html;
         overlay.setPosition(coordinate);
+
+        var url = wikiDataUrl + props['entityhandle'];
+        $.ajax(url, {
+          dataType: "jsonp",
+          jsonp: "callback",
+          success: function(data) {
+            if (Object.keys(data.query.results).length == 0) {
+              html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
+              html += "<pre>{{MapObject\n|Name = OBJECT NAME\n|Handle = 0x" + props['entityhandle'] + "\n|Summary = SUMMARY OF THIS OBJECT THAT IS SHOWN HERE.\n}}</pre>";
+            } else {
+              html = "";
+              $.each(data.query.results, function(index, item) {
+                if('printouts' in item) {
+                  html += "<a href='" + item.fullurl + "' target='_new'>" + item.fulltext + "</a><br>";
+                  html += item.printouts.Summary[0].fulltext + "<br>";
+                }
+              });
+            }
+            content.innerHTML = html;
+          },
+          error: function() {
+            content.innerHTML = html + "<p>Wiki-data is currently unavailable</p>";
+          }
+        });
       }
-      clickAction.getFeatures().clear();
+      clickAction.getFeatures().clear()
     });
 }
+
