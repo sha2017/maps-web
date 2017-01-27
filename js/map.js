@@ -178,24 +178,36 @@ function addPopupActions(map) {
 			container.css("right", "0");
 			otherElementsThatHaveToBeMovedToTheLeft.css("right", "407px");
 			
-			var url = wikiDataUrl + props['entityhandle'];
-			$.ajax(url, {
+			$.ajax({
+				url: wikiDataUrl + props['entityhandle'],
 				dataType: "jsonp",
 				jsonp: "callback",
 				success: function (data) {
 					if (Object.keys(data.query.results).length == 0) {
 						html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
 						html += "<pre>{{MapObject\n|Name = OBJECT NAME\n|Handle = 0x" + props['entityhandle'] + "\n|Summary = SUMMARY OF THIS OBJECT THAT IS SHOWN HERE.\n}}</pre>";
+						content.html(html);
 					} else {
-						html = "";
+						content.html("");
 						$.each(data.query.results, function (index, item) {
 							if ('printouts' in item) {
-								html += "<a href='" + item.fullurl + "' target='_new'>" + item.fulltext + "</a><br>";
-								html += item.printouts.Summary[0] + "<br>";
+								$.ajax({
+									// TODO: remove this proxy and set "Access-Control-Allow-Origin: *" on the orga-wiki.
+									url: "http://full-hyperion.nl/wikiproxy.php?page=" + item.fullurl,
+									dataType: "html",
+									cache: false,
+									success: function (data) {
+										wikiHtml = $(data);
+										content.html(content.html() + wikiHtml.find('div#mw-content-text').html());
+									},
+									error: function (req, error1, error2) {
+										html = "<p>Wiki-data is currently unavailable</p>";
+										content.html(content.html() + html);
+									}
+								});
 							}
 						});
 					}
-					content.html(html);
 				},
 				error: function () {
 					content.html(html + "<p>Wiki-data is currently unavailable</p>");
