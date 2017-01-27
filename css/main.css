@@ -1,65 +1,50 @@
 html {
-    height: 100%;
-    font-family: sans-serif;
-    font-size: 14px;
+	height: 100%;
+	font-family: sans-serif;
+	font-size: 14px;
 }
 
 body {
-    border: 0px;
-    margin: 0px;
-    padding: 0px;
+	border: 0;
+	margin: 0;
+	padding: 0;
 }
 
 #map, body {
-    background-color: #fdfdfd;
-    height: 100%;
-    width: 100%;
-}
-
-.ol-popup {
-    position: absolute;
-    background-color: white;
-    -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #cccccc;
-    bottom: 12px;
-    left: -50px;
-    min-width: 200px;
-}
-
-.ol-popup:after, .ol-popup:before {
-    top: 100%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-}
-
-.ol-popup:after {
-    border-top-color: white;
-    border-width: 10px;
-    left: 48px;
-    margin-left: -10px;
-}
-
-.ol-popup:before {
-    border-top-color: #cccccc;
-    border-width: 11px;
-    left: 48px;
-    margin-left: -11px;
+	background-color: #fdfdfd;
+	height: 100%;
+	width: 100%;
 }
 
 .ol-popup-closer {
-    text-decoration: none;
-    position: absolute;
-    top: 2px;
-    right: 8px;
+	text-decoration: none;
+	position: absolute;
+	top: 2px;
+	right: 8px;
+	color: black;
 }
 
 .ol-popup-closer:after {
-    content: "✖";
+	content: "✖";
+}
+
+.ol-popup {
+	height: 100%;
+	width: 400px;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	right: -400px;
+	background-color: white;
+	overflow-x: hidden;
+	transition: 0.5s;
+	border-left: 2px solid black;
+}
+
+.ol-popup #popup-content {
+	margin: 10px;
+}
+
+.layer-switcher, .ol-attribution {
+	transition: right 0.5s;
 }

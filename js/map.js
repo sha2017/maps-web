@@ -149,34 +149,34 @@ function addPopupActions(map) {
 	var hoverAction = new ol.interaction.Select({condition: ol.events.condition.pointerMove});
 	map.addInteraction(hoverAction);
 	
-	var container = document.getElementById('popup');
-	var content = document.getElementById('popup-content');
-	var closer = document.getElementById('popup-closer');
-	var overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
-		element: container,
-		autoPan: true,
-		autoPanAnimation: {
-			duration: 250
-		}
-	}));
-	map.addOverlay(overlay);
+	var container = $('#popup');
+	var content = $('#popup-content');
+	var closer = $('#popup-closer');
 	
-	closer.onclick = function () {
-		overlay.setPosition(undefined);
-		closer.blur();
+	var otherElementsThatHaveToBeMovedToTheLeft = $('.layer-switcher, .ol-attribution');
+	
+	closer.click(function () {
+		container.css("right", "-400px");
+		otherElementsThatHaveToBeMovedToTheLeft.css("right", "");
+		this.blur();
 		return false;
-	};
+	});
 	
 	// Display popup on click
 	var clickAction = new ol.interaction.Select();
 	map.addInteraction(clickAction);
 	clickAction.on('select', function (e) {
 		if (e.selected.length > 0) {
-			var coordinate = e.mapBrowserEvent.coordinate;
 			var props = e.selected[0].getProperties();
 			var html = '<strong>Layer:</strong> ' + props['layer'] + "<br><strong>Handle:</strong> 0x" + props['entityhandle'] + "<br>";
-			content.innerHTML = html;
-			overlay.setPosition(coordinate);
+			for (attr in props) {
+				if (!['layer', 'entityhandle', 'geometry'].includes(attr) && props[attr] != null) {
+					html += '<strong>' + attr + ':</strong>&nbsp;' + props[attr] + '<br>';
+				}
+			}
+			content.html(html);
+			container.css("right", "0");
+			otherElementsThatHaveToBeMovedToTheLeft.css("right", "407px");
 			
 			var url = wikiDataUrl + props['entityhandle'];
 			$.ajax(url, {
@@ -191,18 +191,17 @@ function addPopupActions(map) {
 						$.each(data.query.results, function (index, item) {
 							if ('printouts' in item) {
 								html += "<a href='" + item.fullurl + "' target='_new'>" + item.fulltext + "</a><br>";
-								html += item.printouts.Summary[0].fulltext + "<br>";
+								html += item.printouts.Summary[0] + "<br>";
 							}
 						});
 					}
-					content.innerHTML = html;
+					content.html(html);
 				},
 				error: function () {
-					content.innerHTML = html + "<p>Wiki-data is currently unavailable</p>";
+					content.html(html + "<p>Wiki-data is currently unavailable</p>");
 				}
 			});
 		}
 		clickAction.getFeatures().clear()
 	});
 }
-
