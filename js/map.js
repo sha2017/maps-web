@@ -91,6 +91,12 @@ function generateStyle(style, props, resolution) {
       scale: props['text_size'] / 5 / resolution,
       rotation: props['text_rotation'] !== undefined ? (-props['text_rotation'] / 180.0 * Math.PI) : 0,
       rotateWithView: true,
+/*
+      stroke: new ol.style.Stroke({
+        color: [230, 230, 230, 0.9],
+        width: 4 * resolution,
+      }),
+*/
     });
   }
 
