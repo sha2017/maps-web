@@ -1,5 +1,5 @@
 var wikiUrl = "https://orga.sha2017.org/";
-var wikiDataUrl = wikiUrl + "api.php?action=askargs&printouts=Summary&format=json&callback=callback&conditions=Handle::0x";
+var wikiApi = wikiUrl + "api.php";
 var map, base_layers, overlay_layers;
 
 function isMobile() {
@@ -179,7 +179,7 @@ function addPopupActions(map) {
 			otherElementsThatHaveToBeMovedToTheLeft.css("right", "407px");
 			
 			$.ajax({
-				url: wikiDataUrl + props['entityhandle'],
+				url: wikiApi + "?action=askargs&printouts=Summary&format=json&conditions=Handle::0x" + props['entityhandle'],
 				dataType: "jsonp",
 				jsonp: "callback",
 				success: function (data) {
@@ -192,13 +192,16 @@ function addPopupActions(map) {
 						$.each(data.query.results, function (index, item) {
 							if ('printouts' in item) {
 								$.ajax({
-									// TODO: remove this proxy and set "Access-Control-Allow-Origin: *" on the orga-wiki.
-									url: "http://full-hyperion.nl/wikiproxy.php?page=" + item.fullurl,
-									dataType: "html",
+									url: wikiApi + "?action=parse&format=json&page=" + item.fulltext,
+									dataType: "jsonp",
+									jsonp: "callback",
 									cache: false,
 									success: function (data) {
-										wikiHtml = $(data);
-										content.html(content.html() + wikiHtml.find('div#mw-content-text').html());
+										html = "<div class='mw-body'>";
+										html += "<h1 id='firstHeading'><a href='" + item.fullurl + "' target='_blank'>" + item.fulltext + "</a></h1>";
+										html += data.parse.text["*"];
+										html += "</div>";
+										content.html(content.html() + html);
 									},
 									error: function (req, error1, error2) {
 										html = "<p>Wiki-data is currently unavailable</p>";

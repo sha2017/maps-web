@@ -1,0 +1,592 @@
+@media screen {
+	/**
+	 * MediaWiki style sheet for general styles on basic content elements
+	 *
+	 * Styles for basic elements: links, lists, etc...
+	 *
+	 * This style sheet is used by the Monobook and Vector skins.
+	 */
+	/* Links */
+	.mw-body a {
+		text-decoration: none;
+		color: #0645ad;
+		background: none;
+	}
+	
+	.mw-body a:visited {
+		color: #0b0080;
+	}
+	
+	.mw-body a:active {
+		color: #faa700;
+	}
+	
+	.mw-body a:hover, .mw-body a:focus {
+		text-decoration: underline;
+	}
+	
+	.mw-body a.stub {
+		color: #772233;
+	}
+	
+	.mw-body a.new {
+		color: #ba0000;
+	}
+	
+	.mw-body a.new:visited {
+		color: #a55858;
+	}
+	
+	/* Interwiki Styling */
+	.mw-body a.extiw,
+	.mw-body a.extiw:active {
+		color: #36b;
+	}
+	
+	.mw-body a.extiw:visited {
+		color: #636;
+	}
+	
+	.mw-body a.extiw:active {
+		color: #b63;
+	}
+	
+	/* External links */
+	.mw-body a.external {
+		color: #36b;
+	}
+	
+	.mw-body a.external:visited {
+		color: #636; /* bug 3112 */
+	}
+	
+	.mw-body a.external:active {
+		color: #b63;
+	}
+	
+	.mw-body a.external.free {
+		word-wrap: break-word;
+	}
+	
+	/* Inline Elements */
+	.mw-body img {
+		border: none;
+		vertical-align: middle;
+	}
+	
+	.mw-body hr {
+		height: 1px;
+		color: #aaa;
+		background-color: #aaa;
+		border: 0;
+		margin: .2em 0;
+	}
+	
+	/* Structural Elements */
+	.mw-body h1,
+	.mw-body h2,
+	.mw-body h3,
+	.mw-body h4,
+	.mw-body h5,
+	.mw-body h6 {
+		color: black;
+		background: none;
+		font-weight: normal;
+		margin: 0;
+		overflow: hidden;
+		padding-top: .5em;
+		padding-bottom: .17em;
+		border-bottom: 1px solid #aaa;
+	}
+	
+	.mw-body h1 {
+		font-size: 188%;
+	}
+	
+	.mw-body h2 {
+		font-size: 150%;
+	}
+	
+	.mw-body h3,
+	.mw-body h4,
+	.mw-body h5,
+	.mw-body h6 {
+		border-bottom: none;
+		font-weight: bold;
+	}
+	
+	.mw-body h3 {
+		font-size: 128%;
+	}
+	
+	.mw-body h4 {
+		font-size: 116%;
+	}
+	
+	.mw-body h5 {
+		font-size: 108%;
+	}
+	
+	.mw-body h6 {
+		font-size: 100%;
+	}
+	
+	/* Some space under the headers in the content area */
+	.mw-body h1,
+	.mw-body h2 {
+		margin-bottom: .6em;
+	}
+	
+	.mw-body h3,
+	.mw-body h4,
+	.mw-body h5 {
+		margin-bottom: .3em;
+	}
+	
+	.mw-body p {
+		margin: .4em 0 .5em 0;
+	}
+	
+	.mw-body p img {
+		margin: 0;
+	}
+	
+	.mw-body ul {
+		list-style-type: square;
+		margin: .3em 0 0 1.6em;
+		padding: 0;
+	}
+	
+	.mw-body ol {
+		margin: .3em 0 0 3.2em;
+		padding: 0;
+		list-style-image: none;
+	}
+	
+	.mw-body li {
+		margin-bottom: .1em;
+	}
+	
+	.mw-body dt {
+		font-weight: bold;
+		margin-bottom: .1em;
+	}
+	
+	.mw-body dl {
+		margin-top: .2em;
+		margin-bottom: .5em;
+	}
+	
+	.mw-body dd {
+		margin-left: 1.6em;
+		margin-bottom: .1em;
+	}
+	
+	.mw-body pre,
+	.mw-body code,
+	.mw-body tt,
+	.mw-body kbd,
+	.mw-body samp,
+	.mw-body .mw-code {
+		/*
+		 * Some browsers will render the monospace text too small, namely Firefox, Chrome and Safari.
+		 * Specifying any valid, second value will trigger correct behavior without forcing a different font.
+		 */
+		font-family: monospace, Courier;
+	}
+	
+	.mw-body code {
+		color: black;
+		background-color: #f9f9f9;
+		border: 1px solid #ddd;
+		border-radius: 2px;
+		padding: 1px 4px;
+	}
+	
+	.mw-body pre,
+	.mw-body .mw-code {
+		color: black;
+		background-color: #f9f9f9;
+		border: 1px solid #ddd;
+		padding: 1em;
+		/* Wrap lines in overflow. T2260, T103780 */
+		white-space: pre-wrap;
+	}
+	
+	/* Tables */
+	.mw-body table {
+		font-size: 100%;
+		width: 100% !important;
+		margin-bottom: 10px;
+	}
+	
+	/* Forms */
+	.mw-body fieldset {
+		border: 1px solid #2f6fab;
+		margin: 1em 0 1em 0;
+		padding: 0 1em 1em;
+	}
+	
+	.mw-body fieldset.nested {
+		margin: 0 0 0.5em 0;
+		padding: 0 0.5em 0.5em;
+	}
+	
+	.mw-body legend {
+		padding: .5em;
+		font-size: 95%;
+	}
+	
+	.mw-body form {
+		border: none;
+		margin: 0;
+	}
+	
+	.mw-body textarea {
+		width: 100%;
+		padding: .1em;
+		display: block;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	
+	/* Emulate Center */
+	.mw-body .center {
+		width: 100%;
+		text-align: center;
+	}
+	
+	.mw-body *.center * {
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	/* Small for tables and similar */
+	.mw-body .small {
+		font-size: 94%;
+	}
+	
+	.mw-body table.small {
+		font-size: 100%;
+	}
+	
+	/**
+	 * MediaWiki style sheet for general styles on complex content
+	 *
+	 * Styles for complex things which are a standard part of page content
+	 * (ie: the CSS classing built into the system), like the TOC.
+	 */
+	/* Table of Contents */
+	.mw-body #toc,
+	.mw-body .toc,
+	.mw-body .mw-warning,
+	.mw-body .toccolours {
+		border: 1px solid #aaa;
+		background-color: #f9f9f9;
+		padding: 5px;
+		font-size: 90%;
+	}
+	
+	/**
+	 * We want to display the ToC element with intrinsic width in block mode. The fit-content
+	 * value for width is however not supported by large groups of browsers.
+	 *
+	 * We use display:table. Even though it should only contain other table-* display
+	 * elements, there are no known problems with using this.
+	 *
+	 * Because IE < 8 and other older browsers don't support display:table, we fallback to
+	 * using inline-block mode, which features at least intrinsic width, but won't clear preceding
+	 * inline elements. In practice inline elements surrounding the TOC are uncommon enough that
+	 * this is an acceptable sacrifice.
+	 */
+	.mw-body #toc,
+	.mw-body .toc {
+		display: inline-block;
+		display: table;
+		
+		/* IE7 and earlier */
+		zoom: 1;
+		*display: inline;
+	}
+	/* CSS for backwards-compatibility with cached page renders and creative uses in wikitext */
+	.mw-body table#toc,
+	.mw-body table.toc {
+		border-collapse: collapse;
+	}
+	
+	/* Remove additional paddings inside table-cells that are not present in <div>s */
+	.mw-body table#toc td,
+	.mw-body table.toc td {
+		padding: 7px;
+	}
+	
+	.mw-body #toc h2,
+	.mw-body .toc h2 {
+		display: inline;
+		border: none;
+		padding: 0;
+		font-size: 100%;
+		font-weight: bold;
+	}
+	
+	.mw-body #toc #toctitle,
+	.mw-body .toc #toctitle,
+	.mw-body #toc .toctitle,
+	.mw-body .toc .toctitle {
+		text-align: center;
+		width: 100%;
+	}
+	
+	.mw-body #toc ul,
+	.mw-body .toc ul {
+		list-style-type: none;
+		list-style-image: none;
+		margin-left: 0;
+		padding: 0;
+		text-align: left;
+	}
+	
+	.mw-body #toc ul ul,
+	.mw-body .toc ul ul {
+		margin: 0 0 0 2em;
+	}
+	
+	/* Separate columns for tocnumber and toctext */
+	/* Ignored by IE7 and lower */
+	.mw-body .tocnumber,
+	.mw-body .toctext {
+		display: table-cell;
+		/*
+		Text decorations are not propagated to the contents of inline blocks and inline tables,
+		according to <http://www.w3.org/TR/css-text-decor-3/#line-decoration>, and 'display: table-cell'
+		generates an inline table when used without any parent table-rows and tables.
+		*/
+		text-decoration: inherit;
+	}
+	
+	/* Space between the columns for tocnumber and toctext */
+	.mw-body .tocnumber {
+		padding-left: 0;
+		padding-right: 0.5em;
+	}
+	
+	/* Warning */
+	.mw-body .mw-warning {
+		margin-left: 50px;
+		margin-right: 50px;
+		text-align: center;
+	}
+	
+	/* Images */
+	/* @noflip */
+	.mw-body div.floatright,
+	.mw-body table.floatright {
+		margin: 0 0 .5em .5em;
+		border: 0;
+	}
+	
+	.mw-body div.floatright p {
+		font-style: italic;
+	}
+	
+	/* @noflip */
+	.mw-body div.floatleft,
+	.mw-body table.floatleft {
+		margin: 0 .5em .5em 0;
+		border: 0;
+	}
+	
+	.mw-body div.floatleft p {
+		font-style: italic;
+	}
+	
+	/* Thumbnails */
+	.mw-body div.thumb {
+		margin-bottom: .5em;
+		width: auto;
+		background-color: transparent;
+	}
+	
+	.mw-body div.thumbinner {
+		border: 1px solid #ccc;
+		padding: 3px;
+		background-color: #f9f9f9;
+		font-size: 94%;
+		text-align: center;
+		overflow: hidden;
+	}
+	
+	.mw-body .thumbimage {
+		border: 1px solid #ccc;
+	}
+	
+	.mw-body .thumbcaption {
+		border: none;
+		line-height: 1.4em;
+		padding: 3px;
+		font-size: 94%;
+		/* Default styles when there's no .mw-content-ltr or .mw-content-rtl, overridden below */
+		text-align: left;
+	}
+	
+	.mw-body .firstHeading {
+		margin-bottom: .1em;
+		/* These two rules hack around bug 2013 (fix for more limited bug 11325).
+		 * When bug 2013 is fixed properly, they should be removed. */
+		line-height: 1.2em;
+		padding-bottom: 0;
+	}
+	
+	/* Sub-navigation */
+	.mw-body #siteSub {
+		display: none;
+	}
+	
+	.mw-body #jump-to-nav {
+		/* Negate #contentSub's margin and replicate it so that the jump to links don't affect the spacing */
+		margin-top: -1.4em;
+		margin-bottom: 1.4em;
+	}
+	
+	.mw-body #contentSub,
+	.mw-body #contentSub2 {
+		font-size: 84%;
+		line-height: 1.2em;
+		margin: 0 0 1.4em 1em;
+		color: #545454;
+		width: auto;
+	}
+	
+	.mw-body span.subpages {
+		display: block;
+	}
+	
+	.mw-body {
+		font-family: sans-serif;
+		padding: 1em;
+		/* Border on top, left, and bottom side */
+		border-right-width: 0;
+		/* Merge the border with tabs' one (in their background image) */
+		background-color: #ffffff;
+		color: #252525;
+		direction: ltr;
+	}
+	
+	.mw-body .mw-editsection,
+	.mw-body .mw-editsection-like {
+		display: none;
+	}
+	
+	.mw-body p {
+		line-height: inherit;
+		margin: 0.5em 0;
+	}
+	
+	.mw-body h1,
+	.mw-body h2 {
+		font-family: "Linux Libertine", Georgia, Times, serif;
+		line-height: 1.3;
+		margin-bottom: 0.25em;
+		padding: 0;
+	}
+	
+	.mw-body h1 {
+		font-size: 1.8em;
+	}
+	
+	.mw-body .mw-body-content h1 {
+		margin-top: 1em;
+	}
+	
+	.mw-body h2 {
+		font-size: 1.5em;
+		margin-top: 1em;
+	}
+	
+	.mw-body h3,
+	.mw-body h4,
+	.mw-body h5,
+	.mw-body h6 {
+		line-height: 1.6;
+		margin-top: 0.3em;
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+	
+	.mw-body h3 {
+		font-size: 1.2em;
+	}
+	
+	.mw-body h3,
+	.mw-body h4 {
+		font-weight: bold;
+	}
+	
+	.mw-body h4,
+	.mw-body h5,
+	.mw-body h6 {
+		font-size: 100%;
+		/* (reset) */
+	}
+	
+	.mw-body #toc h2,
+	.mw-body .toc h2 {
+		font-size: 100%;
+		/* (reset) */
+		font-family: sans-serif;
+	}
+	
+	.mw-body .firstHeading {
+		/* Change the default from mediawiki.skinning CSS to let indicators float into heading area */
+		overflow: visible;
+	}
+	
+	.mw-body .mw-indicators {
+		float: right;
+		line-height: 1.6;
+		font-size: 0.875em;
+		/* Ensure that this is displayed on top of .mw-body-content and clickable */
+		position: relative;
+		z-index: 1;
+	}
+	
+	.mw-body .mw-indicator {
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+	}
+	
+	/* Hide empty portlets */
+	.mw-body div.emptyPortlet {
+		display: none;
+	}
+	
+	.mw-body ul {
+		list-style-type: disc;
+		list-style-image: url(data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%20width%3D%225%22%20height%3D%2213%22%3E%0A%3Ccircle%20cx%3D%222.5%22%20cy%3D%229.5%22%20r%3D%222.5%22%20fill%3D%22%2300528c%22%2F%3E%0A%3C%2Fsvg%3E%0A);
+		list-style-image: url(https://orga.sha2017.org/skins/Vector/images/bullet-icon.svg?90d59) !ie;
+		/* Fallback to PNG bullet for IE 8 and below using CSS hack */
+		list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAANCAIAAADuXjPfAAAABnRSTlMA/wD/AP83WBt9AAAAHklEQVR4AWP4jwrowWcI6oEgEBtIISNCfFT9mOYDACO/lbNIGC/yAAAAAElFTkSuQmCC) \9;
+		/* Fallback to PNG bullet for IE 8 and below using CSS hack */
+		list-style-image: url(https://orga.sha2017.org/skins/Vector/images/bullet-icon.png?e31f8) \9 !ie;
+	}
+	
+	.mw-body pre,
+	.mw-body .mw-code {
+		line-height: 1.3em;
+	}
+	
+	/* Site Notice (includes notices from CentralNotice extension) */
+	.mw-body #siteNotice {
+		font-size: 0.8em;
+	}
+	
+	.mw-body .redirectText {
+		font-size: 140%;
+	}
+	
+	.mw-body .redirectMsg p {
+		margin: 0;
+	}
+}

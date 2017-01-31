@@ -49,8 +49,3 @@ body {
 .layer-switcher, .ol-attribution {
 	transition: right 0.5s;
 }
-
-.ol-popup #popup-content table {
-	width: 100% !important;
-	margin-bottom: 10px;
-}
