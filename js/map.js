@@ -185,7 +185,7 @@ function addPopupActions(map) {
 				success: function (data) {
 					if (Object.keys(data.query.results).length == 0) {
 						html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
-						html += "<pre>{{MapObject\n|Name = OBJECT NAME\n|Handle = 0x" + props['entityhandle'] + "\n|Summary = SUMMARY OF THIS OBJECT THAT IS SHOWN HERE.\n}}</pre>";
+						html += "<pre>{{MapObject|Handle = 0x" + props['entityhandle'] + "}}</pre>";
 						content.html(html);
 					} else {
 						content.html("");
