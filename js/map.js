@@ -2,6 +2,8 @@ var wikiUrl = "https://orga.sha2017.org/";
 var wikiApi = wikiUrl + "api.php";
 var map, base_layers, overlay_layers;
 
+var popupsEnabled = { enabled: true };
+
 function isMobile() {
 	try {
 		document.createEvent("TouchEvent");
@@ -17,6 +19,7 @@ $(function () {
 });
 
 function createMap(config) {
+	
 	base_layers = new ol.layer.Group({
 		title: 'Base Layers',
 		layers: [
@@ -29,8 +32,12 @@ function createMap(config) {
 		title: 'Overlays', layers: []
 	});
 	
+	measurement_layers = new ol.layer.Group({
+		title: 'Measurements', layers: []
+	});
+	
 	map = new ol.Map({
-		layers: [base_layers, overlay_layers],
+		layers: [base_layers, overlay_layers, measurement_layers],
 		target: 'map',
 		controls: ol.control.defaults({
 			attributionOptions: ({
@@ -44,6 +51,8 @@ function createMap(config) {
 			maxZoom: config.zoom_range[1]
 		})
 	});
+	
+	initMeasurements(map, measurement_layers, popupsEnabled);
 	
 	var layerSwitcher = new ol.control.LayerSwitcher();
 	map.addControl(layerSwitcher);
@@ -166,8 +175,14 @@ function addPopupActions(map) {
 	var clickAction = new ol.interaction.Select();
 	map.addInteraction(clickAction);
 	clickAction.on('select', function (e) {
+		if(!popupsEnabled.enabled) {
+			return;
+		}
 		if (e.selected.length > 0) {
 			var props = e.selected[0].getProperties();
+			if(!props['layer']) {
+				return;
+			}
 			var html = '<strong>Layer:</strong> ' + props['layer'] + "<br><strong>Handle:</strong> 0x" + props['entityhandle'] + "<br>";
 			for (attr in props) {
 				if (!['layer', 'entityhandle', 'geometry'].includes(attr) && props[attr] != null) {
