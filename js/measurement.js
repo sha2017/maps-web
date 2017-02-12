@@ -4,6 +4,8 @@ var source;
 function removeDrawing(counter) {
 	source.removeFeature(drawings[counter]);
 	tooltips[counter].parentNode.removeChild(tooltips[counter]);
+	
+	source.refresh({force:true});
 }
 
 function initMeasurements(map, layergroup, popupsEnabled)
