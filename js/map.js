@@ -162,7 +162,7 @@ function addPopupActions(map) {
 	var content = $('#popup-content');
 	var closer = $('#popup-closer');
 	
-	var otherElementsThatHaveToBeMovedToTheLeft = $('.layer-switcher, .ol-attribution');
+	var otherElementsThatHaveToBeMovedToTheLeft = $('.layer-switcher, .measurement-tool, .ol-attribution');
 	
 	closer.click(function () {
 		container.css("right", "-400px");

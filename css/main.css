@@ -46,6 +46,6 @@ body {
 	margin-top: 20px;
 }
 
-.layer-switcher, .ol-attribution {
+.layer-switcher, .measurement-tool, .ol-attribution {
 	transition: right 0.5s;
 }

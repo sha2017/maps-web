@@ -1,4 +1,6 @@
-function initMeasurements(map, layergroup, popupsEnabled) {
+function initMeasurements(map, layergroup, popupsEnabled)
+{
+	var wgs84Sphere = new ol.Sphere(6378137);
 	
 	var source = new ol.source.Vector();
 	var vector = new ol.layer.Vector({
@@ -107,8 +109,9 @@ function initMeasurements(map, layergroup, popupsEnabled) {
 	
 	
 	
-	var typeSelect = document.getElementById('type');
-	var aanuitknop = document.getElementById('meten');
+	var typeSelect = document.getElementById('measurement-type');
+	var aanuitknop = document.getElementById('measurement-enable');
+	var widget = document.getElementById('measurement-tool');
 	
 	var draw; // global so we can remove it later
 	function addInteraction() {
@@ -211,8 +214,14 @@ function initMeasurements(map, layergroup, popupsEnabled) {
 	 * @return {string}
 	 */
 	var formatLength = function (line) {
-		var length = Math.round(line.getLength() * 100) / 100;
-		
+		var coordinates = line.getCoordinates();
+		var length = 0;
+		var sourceProj = map.getView().getProjection();
+		for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+			var c1 = ol.proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
+			var c2 = ol.proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
+			length += wgs84Sphere.haversineDistance(c1, c2);
+		}
 		var output;
 		if (length > 100) {
 			output = (Math.round(length / 1000 * 100) / 100) +
@@ -231,8 +240,11 @@ function initMeasurements(map, layergroup, popupsEnabled) {
 	 * @return {string}
 	 */
 	var formatArea = function (polygon) {
-		var area = polygon.getArea();
-		
+		var sourceProj = map.getView().getProjection();
+		var geom = /** @type {ol.geom.Polygon} */(polygon.clone().transform(
+			sourceProj, 'EPSG:4326'));
+		var coordinates = geom.getLinearRing(0).getCoordinates();
+		var area = Math.abs(wgs84Sphere.geodesicArea(coordinates));
 		var output;
 		if (area > 10000) {
 			output = (Math.round(area / 1000000 * 100) / 100) +
@@ -266,11 +278,25 @@ function initMeasurements(map, layergroup, popupsEnabled) {
 		typeSelect.onchange = function (e) {};
 	}
 	
-	aanuitknop.onchange = function (e) {
-		if(aanuitknop.value == "on") {
+	function setActivationState() {
+		if(aanuitknop.checked) {
 			start();
 		} else {
 			stop();
 		}
+	}
+	
+	aanuitknop.onchange = setActivationState;
+	
+	setActivationState();
+	
+	var hiddenClasses = "ol-control";
+	var shownClasses = hiddenClasses + " shown";
+	
+	widget.onmouseover = function() {
+		widget.className = shownClasses;
+	};
+	widget.onmouseout = function() {
+		widget.className = hiddenClasses;
 	};
 }
