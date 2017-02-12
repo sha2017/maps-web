@@ -33,7 +33,7 @@ function createMap(config) {
 	});
 	
 	measurement_layers = new ol.layer.Group({
-		title: 'Measurements', layers: []
+		layers: []
 	});
 	
 	map = new ol.Map({

@@ -1,8 +1,16 @@
+var drawings = [];
+var tooltips = [];
+var source;
+function removeDrawing(counter) {
+	source.removeFeature(drawings[counter]);
+	tooltips[counter].parentNode.removeChild(tooltips[counter]);
+}
+
 function initMeasurements(map, layergroup, popupsEnabled)
 {
 	var wgs84Sphere = new ol.Sphere(6378137);
 	
-	var source = new ol.source.Vector();
+	source = new ol.source.Vector();
 	var vector = new ol.layer.Vector({
 		source: source,
 		style: new ol.style.Style({
@@ -60,20 +68,6 @@ function initMeasurements(map, layergroup, popupsEnabled)
 	
 	
 	/**
-	 * Message to show when the user is drawing a polygon.
-	 * @type {string}
-	 */
-	var continuePolygonMsg = 'Click to continue drawing the polygon';
-	
-	
-	/**
-	 * Message to show when the user is drawing a line.
-	 * @type {string}
-	 */
-	var continueLineMsg = 'Click to continue drawing the line';
-	
-	
-	/**
 	 * Handle pointer move.
 	 * @param {ol.MapBrowserEvent} evt
 	 */
@@ -91,11 +85,11 @@ function initMeasurements(map, layergroup, popupsEnabled)
 			var geom = (sketch.getGeometry());
 			if (geom instanceof ol.geom.Polygon) {
 				output = formatArea(/** @type {ol.geom.Polygon} */ (geom));
-				helpMsg = continuePolygonMsg;
+				helpMsg = 'Double-click to finish drawing the polygon';
 				tooltipCoord = geom.getInteriorPoint().getCoordinates();
 			} else if (geom instanceof ol.geom.LineString) {
 				output = formatLength(/** @type {ol.geom.LineString} */ (geom));
-				helpMsg = continueLineMsg;
+				helpMsg = 'Double-click to finish drawing the line';
 				tooltipCoord = geom.getLastCoordinate();
 			}
 			measureTooltipElement.innerHTML = output;
@@ -114,6 +108,7 @@ function initMeasurements(map, layergroup, popupsEnabled)
 	var widget = document.getElementById('measurement-tool');
 	
 	var draw; // global so we can remove it later
+	var drawingCounter = 0;
 	function addInteraction() {
 		var type = (typeSelect.value == 'area' ? 'Polygon' : 'LineString');
 		draw = new ol.interaction.Draw({
@@ -152,7 +147,12 @@ function initMeasurements(map, layergroup, popupsEnabled)
 		
 		draw.on('drawend',
 			function (evt) {
+				drawings[drawingCounter] = sketch;
+				tooltips[drawingCounter] = measureTooltipElement;
 				measureTooltipElement.className = 'tooltip tooltip-static';
+				measureTooltipElement.innerHTML += ' <a onclick="removeDrawing(' + drawingCounter + ')">&times;</a>';
+				drawingCounter++;
+				
 				measureTooltip.setOffset([0, -7]);
 				// unset sketch
 				sketch = null;
@@ -161,7 +161,6 @@ function initMeasurements(map, layergroup, popupsEnabled)
 				createMeasureTooltip();
 			}, this);
 	}
-	
 	
 	/**
 	 * Creates a new help tooltip
