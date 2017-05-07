@@ -120,19 +120,6 @@ function generateStyle(style, props, resolution) {
 }
 
 function addVectorLayers(layer_data) {
-	
-	function styleFunction(feature, resolution) {
-		console.log(resolution);
-		var props = feature.getProperties();
-		for (var rule in layer_data.styles) {
-			for (var key in layer_data.styles[rule]['match']) {
-				if (key in props && props[key] == layer_data.styles[rule]['match'][key]) {
-					return generateStyle(layer_data.styles[rule]['style'], props, resolution);
-				}
-			}
-		}
-	}
-	
 	$.each(layer_data.layers, function (index, layer) {
 		var vectorSource = new ol.source.Vector({
 			url: 'vector/' + layer.source,
@@ -143,19 +130,35 @@ function addVectorLayers(layer_data) {
 			title: layer.name,
 			source: vectorSource,
 			visible: layer.visible,
-			style: styleFunction,
+			style: function(feature, resolution) {
+				var props = feature.getProperties();
+				return generateStyle(layer_data.styles[layer.name][props['layer']], props, resolution);
+			},
 			updateWhileAnimating: !isMobile(),
 			updateWhileInteracting: !isMobile()
 		});
+		vectorLayer.setZIndex(layer['z-index']);
 		overlay_layers.getLayers().push(vectorLayer);
 	});
 	
-	addPopupActions(map);
+	addPopupActions(map, layer_data);
 }
 
-function addPopupActions(map) {
+function addPopupActions(map, layer_data) {
 	// Highlight element on hover:
-	var hoverAction = new ol.interaction.Select({condition: ol.events.condition.pointerMove});
+	var hoverAction = new ol.interaction.Select({
+		condition: ol.events.condition.pointerMove,
+		filter: function(feature, layer) {
+			if (layer === null) {
+				return false;
+			}
+			var style = layer_data.styles[layer.getProperties()['title']][feature.getProperties()['layer']];
+			if ('selectable' in style && !style['selectable']) {
+				return false;
+			}
+			return true;
+		}
+	});
 	map.addInteraction(hoverAction);
 	
 	var container = $('#popup');
@@ -172,7 +175,18 @@ function addPopupActions(map) {
 	});
 	
 	// Display popup on click
-	var clickAction = new ol.interaction.Select();
+	var clickAction = new ol.interaction.Select({
+		filter: function(feature, layer) {
+			if (layer === null) {
+				return false;
+			}
+			var style = layer_data.styles[layer.getProperties()['title']][feature.getProperties()['layer']];
+			if ('selectable' in style && !style['selectable']) {
+				return false;
+			}
+			return true;
+		}
+	});
 	map.addInteraction(clickAction);
 	clickAction.on('select', function (e) {
 		if(!popupsEnabled.enabled) {
