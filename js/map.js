@@ -107,12 +107,7 @@ function generateStyle(style, props, resolution) {
 			scale: props['text_size'] / 5 / resolution,
 			rotation: props['text_rotation'] !== undefined ? (-props['text_rotation'] / 180.0 * Math.PI) : 0,
 			rotateWithView: true,
-			/*
-			 stroke: new ol.style.Stroke({
-			 color: [230, 230, 230, 0.9],
-			 width: 4 * resolution,
-			 }),
-			 */
+			fill: new ol.style.Fill({ color: style['text-color'] })
 		});
 	}
 	
@@ -156,6 +151,9 @@ function addPopupActions(map, layer_data) {
 			if ('selectable' in style && !style['selectable']) {
 				return false;
 			}
+			if (feature.getGeometry().getType() == "Point" && 'text-selectable' in style && !style['text-selectable']) {
+				return false;
+			}
 			return true;
 		}
 	});
@@ -182,6 +180,9 @@ function addPopupActions(map, layer_data) {
 			}
 			var style = layer_data.styles[layer.getProperties()['title']][feature.getProperties()['layer']];
 			if ('selectable' in style && !style['selectable']) {
+				return false;
+			}
+			if (feature.getGeometry().getType() == "Point" && 'text-selectable' in style && !style['text-selectable']) {
 				return false;
 			}
 			return true;
