@@ -1,4 +1,4 @@
-var wikiUrl = "https://orga.sha2017.org/";
+var wikiUrl = "https://wiki.sha2017.org/";
 var wikiApi = wikiUrl + "api.php";
 var map, base_layers, overlay_layers;
 
