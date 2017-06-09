@@ -198,12 +198,7 @@ function addPopupActions(map, layer_data) {
 			if(!props['layer']) {
 				return;
 			}
-			var html = '<strong>Layer:</strong> ' + props['layer'] + "<br><strong>Handle:</strong> 0x" + props['entityhandle'] + "<br>";
-			for (attr in props) {
-				if (!['layer', 'entityhandle', 'geometry'].includes(attr) && props[attr] != null) {
-					html += '<strong>' + attr + ':</strong>&nbsp;' + props[attr] + '<br>';
-				}
-			}
+			var html = "<img src='img/loading.gif' alt='loading' class='loading'>";
 			content.html(html);
 			container.css("right", "0");
 			otherElementsThatHaveToBeMovedToTheLeft.css("right", "407px");
@@ -213,7 +208,9 @@ function addPopupActions(map, layer_data) {
 				dataType: "jsonp",
 				jsonp: "callback",
 				success: function (data) {
+					content.html("");
 					if (Object.keys(data.query.results).length == 0) {
+						html = '<strong>Layer:</strong> ' + props['layer'] + "<br>";
 						html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
 						html += "<pre>{{MapObject|Handle = 0x" + props['entityhandle'] + "}}</pre>";
 						if('Form' in props && 'Template' in props) {
@@ -226,7 +223,6 @@ function addPopupActions(map, layer_data) {
 						}
 						content.html(html);
 					} else {
-						content.html("");
 						$.each(data.query.results, function (index, item) {
 							if ('printouts' in item) {
 								$.ajax({
@@ -251,7 +247,10 @@ function addPopupActions(map, layer_data) {
 					}
 				},
 				error: function () {
-					content.html(html + "<p>Wiki-data is currently unavailable</p>");
+					html = '<strong>Layer:</strong> ' + props['layer'] + "<br>";
+					html += "<p>The wiki-data is currently unavailable. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
+					html += "<pre>{{MapObject|Handle = 0x" + props['entityhandle'] + "}}</pre>";
+					content.html(html);
 				}
 			});
 		}
