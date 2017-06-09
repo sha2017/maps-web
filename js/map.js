@@ -235,10 +235,11 @@ function addPopupActions(map, layer_data) {
 										html += "<h1 id='firstHeading'><a href='" + item.fullurl + "' target='_blank'>" + item.fulltext + "</a></h1>";
 										html += data.parse.text["*"];
 										html += "</div>";
+										html += "<script>fixRelativeUrls()</script>";
 										content.html(content.html() + html);
 									},
 									error: function (req, error1, error2) {
-										html = "<p>Wiki-data is currently unavailable</p>";
+										html = "<p>Wiki-page <a href='" + item.fullurl + "' target='_blank'>" + item.fulltext + "</a> is currently unavailable</p>";
 										content.html(content.html() + html);
 									}
 								});
@@ -265,4 +266,16 @@ function createWithForm(handle, form, template)
 	url = wikiUrl + "w/Special:FormEdit/" + form + "/" + name;
 	inputform.attr('action', url);
 	return true;
+}
+
+function fixRelativeUrls()
+{
+	$(".mw-body a").each(function() {
+		url = $(this).attr('href');
+		if(url.substr(0, 1) == "/") {
+			url = wikiUrl + url.substr(1);
+			$(this).attr('href', url);
+		}
+		$(this).attr('target', '_blank');
+	});
 }
