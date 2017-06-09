@@ -216,6 +216,14 @@ function addPopupActions(map, layer_data) {
 					if (Object.keys(data.query.results).length == 0) {
 						html += "<p>This object is not yet defined in the wiki. If there is an page on the <a href='" + wikiUrl + "' target='_new'>wiki</a> representing this object, add the following snippet to that page:</p>";
 						html += "<pre>{{MapObject|Handle = 0x" + props['entityhandle'] + "}}</pre>";
+						if('Form' in props && 'Template' in props) {
+							html += "Or create a page by typing the name here:";
+							html += "<form id='form-" + props['entityhandle'] + "' onsubmit='return createWithForm(\"" + props['entityhandle'] + "\", \"" + props['Form'] + "\", \"" + props['Template'] + "\")' target='_blank'>";
+							html += "<input type='text' value='' name='name' class='name'>";
+							html += "<input type='hidden' value='0x" + props['entityhandle'] + "' name='" + props['Template'] + "[handle]' class='hidden'>";
+							html += "<input type='submit' value='Create'>";
+							html += "</form>";
+						}
 						content.html(html);
 					} else {
 						content.html("");
@@ -249,4 +257,13 @@ function addPopupActions(map, layer_data) {
 		}
 		clickAction.getFeatures().clear()
 	});
+}
+
+function createWithForm(handle, form, template)
+{
+	const inputform = $("#form-" + handle);
+	name = inputform.find("input.name").val();
+	url = wikiUrl + "w/Special:FormEdit/" + form + "/" + name;
+	inputform.attr('action', url);
+	return true;
 }
