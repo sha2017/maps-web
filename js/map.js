@@ -278,4 +278,5 @@ function fixRelativeUrls()
 		}
 		$(this).attr('target', '_blank');
 	});
+	createSHAFlag();
 }

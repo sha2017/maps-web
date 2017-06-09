@@ -56,3 +56,9 @@ body {
 	margin-left: auto;
 	margin-right:auto;
 }
+
+#codebox { /* for the SHA flag */
+	margin-right: 0.6em;
+	margin-top: 0.3em;
+	font-size: 20px;
+}
