@@ -340,7 +340,7 @@ function createSHAFlag() {
 		sha1.update($("#firstHeading").text());
 	}
 	var hex = sha1.getHash("HEX");
-	shaflag(hex, "body, #flag")
+	shaflag(hex, "#flag")
 	var flags = document.getElementsByClassName('shaflag-title');
 	for (var i = 0, max = flags.length; i < max; i++) {
 		if (flags[i].dataset.input) {
