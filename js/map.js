@@ -24,6 +24,13 @@ function createMap(config) {
 		title: 'Base Layers',
 		layers: [
 			new ol.layer.Tile({title: "Blank", type: 'base'}),
+			new ol.layer.Tile({
+				title: "Aerial Imagery", type: 'base',
+				source: new ol.source.OSM({
+					attributions: 'Kadaster / <a href="http://www.beeldmateriaal.nl/">Beeldmateriaal.nl</a>, CC BY 4.0',
+					url: 'https://geodata.nationaalgeoregister.nl/luchtfoto/wmts?FORMAT=image/jpeg&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=2016_ortho25&STYLE=&FORMAT=image/jpeg&tileMatrixSet=OGC:1.0:GoogleMapsCompatible&tileMatrix={z}&tileRow={y}&tileCol={x}',
+				})
+			}),
 			new ol.layer.Tile({title: "OSM", type: 'base', source: new ol.source.OSM()}),
 		]
 	});
