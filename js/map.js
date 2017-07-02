@@ -18,8 +18,61 @@ $(function () {
 	$.getJSON('config.json', createMap);
 });
 
+function getPosition() {
+	// Fetch the position from the URL anchor, or return the default
+	if (window.location.hash !== '') {
+		var hash = window.location.hash.replace('#map=', '');
+		var parts = hash.split('/');
+		if (parts.length === 4) {
+			zoom = parseInt(parts[0], 10);
+			center = [
+			    parseFloat(parts[1]),
+			    parseFloat(parts[2])
+			];
+			rotation = parseFloat(parts[3]);
+			return {'zoom': zoom, 'center': center, 'rotation': rotation}
+		}
+	}
+	return {'zoom': 17, 'center': [5.52579, 52.28488], 'rotation': 0}
+}
+
+var shouldUpdate = true;
+
+function updatePermalink() {
+	// Called when the map position is moved to update the permalink and window state
+	if (!shouldUpdate) {
+          // do not update the URL when the view was changed in the 'popstate' handler
+          shouldUpdate = true;
+          return;
+	}
+	var view = map.getView();
+	var center = (new ol.geom.Point(view.getCenter())).transform('EPSG:3857', 'EPSG:4326').getCoordinates();
+	var hash = '#map=' +
+            	view.getZoom() + '/' +
+            	Math.round(center[0] * 10000) / 10000 + '/' +
+            	Math.round(center[1] * 10000) / 10000 + '/' +
+		view.getRotation();
+	// NB: We're storing the EPSG:3857 coords in the state hash, but the URL uses EPSG:4326
+	var state = {
+        	zoom: view.getZoom(),
+          	center: view.getCenter(),
+          	rotation: view.getRotation()
+        };
+        window.history.pushState(state, 'map', hash);
+}
+
+function popState(event) {
+	// Handle a back button press
+	if (event.state === null) {
+          return;
+        }
+        map.getView().setCenter(event.state.center);
+        map.getView().setZoom(event.state.zoom);
+        map.getView().setRotation(event.state.rotation);
+        shouldUpdate = false;
+}
+
 function createMap(config) {
-	
 	base_layers = new ol.layer.Group({
 		title: 'Base Layers',
 		layers: [
@@ -42,7 +95,8 @@ function createMap(config) {
 	measurement_layers = new ol.layer.Group({
 		layers: []
 	});
-	
+
+	position = getPosition();
 	map = new ol.Map({
 		layers: [base_layers, overlay_layers, measurement_layers],
 		target: 'map',
@@ -52,12 +106,14 @@ function createMap(config) {
 			})
 		}).extend([new ol.control.ScaleLine()]),
 		view: new ol.View({
-			center: (new ol.geom.Point([5.52579, 52.28488])).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
-			zoom: 17,
+			center: (new ol.geom.Point(position['center'])).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
+			zoom: position['zoom'],
 			minZoom: config.zoom_range[0],
 			maxZoom: config.zoom_range[1]
 		})
 	});
+	map.on('moveend', updatePermalink);
+	window.addEventListener('popstate', popState);
 	
 	initMeasurements(map, measurement_layers, popupsEnabled);
 	
