@@ -65,7 +65,6 @@ function createMap(config) {
 	map.addControl(layerSwitcher);
 	
 	$.getJSON('vector_layers.json', addVectorLayers);
-	
 	config.layers.forEach(function (layer) {
 		var layerTile = new ol.layer.Tile({
 			title: layer.name,
@@ -79,7 +78,9 @@ function createMap(config) {
 		});
 		overlay_layers.getLayers().push(layerTile);
 	});
-	
+
+	addVillageLayer();
+
 	// The <canvas> element doesn't seem to get sized correctly
 	// on page load, which causes vector element hover to break.
 	// Update the size after a small delay.
@@ -154,6 +155,9 @@ function addPopupActions(map, layer_data) {
 			if (layer === null) {
 				return false;
 			}
+			if (layer.getProperties()['title'] == 'Villages') {
+				return true;
+			}
 			var style = layer_data.styles[layer.getProperties()['title']][feature.getProperties()['layer']];
 			if ('selectable' in style && !style['selectable']) {
 				return false;
@@ -185,6 +189,9 @@ function addPopupActions(map, layer_data) {
 			if (layer === null) {
 				return false;
 			}
+			if (layer.getProperties()['title'] == 'Villages') {
+				return true;
+			}
 			var style = layer_data.styles[layer.getProperties()['title']][feature.getProperties()['layer']];
 			if ('selectable' in style && !style['selectable']) {
 				return false;
@@ -202,16 +209,21 @@ function addPopupActions(map, layer_data) {
 		}
 		if (e.selected.length > 0) {
 			var props = e.selected[0].getProperties();
-			if(!props['layer']) {
+			if(!props['layer'] && !props['pagename']) {
 				return;
 			}
 			var html = "<img src='img/loading.gif' alt='loading' class='loading'>";
 			content.html(html);
 			container.css("right", "0");
 			otherElementsThatHaveToBeMovedToTheLeft.css("right", "407px");
-			
+
+			if (props['entityhandle']) {
+				query = "Handle::0x" + props['entityhandle'];
+			} else if (props['pagename']) {
+				query = props['pagename'];
+			}
 			$.ajax({
-				url: wikiApi + "?action=askargs&printouts=Summary&format=json&conditions=Handle::0x" + props['entityhandle'],
+				url: wikiApi + "?action=askargs&printouts=Summary&format=json&conditions=" + query,
 				dataType: "jsonp",
 				jsonp: "callback",
 				success: function (data) {
@@ -264,6 +276,50 @@ function addPopupActions(map, layer_data) {
 		}
 		clickAction.getFeatures().clear()
 	});
+}
+
+var styleCache;
+
+function addVillageLayer() {
+	styleCache = {};
+	var vectorSource = new ol.source.Vector({
+		url: 'vector/villages.json',
+		format: new ol.format.GeoJSON()
+	});
+	
+	var vectorLayer = new ol.layer.Vector({
+		title: 'Villages',
+		source: vectorSource,
+		visible: true,
+		style: function(feature, resolution) {
+			props = feature.getProperties();
+			if (styleCache[props['image_url']]) {
+				return [styleCache[props['image_url']]];
+			}
+			if (props['image_url']) {
+				img = new ol.style.Icon({
+					src: props['image_url'],
+					size: [32, 32]
+				});
+
+			} else {
+				img = new ol.style.Circle({
+					radius: 6,
+					fill: new ol.style.Fill({
+						color: 'red'
+					})
+				});
+			}
+
+			style = new ol.style.Style({image: img});
+			styleCache[props['image_url']] = style;
+			return [style];
+		},
+		updateWhileAnimating: !isMobile(),
+		updateWhileInteracting: !isMobile()
+	});
+	vectorLayer.setZIndex(10);
+	overlay_layers.getLayers().push(vectorLayer);
 }
 
 function createWithForm(handle, form, template)
