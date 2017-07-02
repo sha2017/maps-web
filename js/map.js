@@ -341,5 +341,18 @@ function fixRelativeUrls()
 		}
 		$(this).attr('target', '_blank');
 	});
+	$(".mw-body img").each(function() {
+		url = $(this).attr('src');
+		if(url.substr(0, 1) == "/") {
+			url = wikiUrl + url.substr(1);
+			$(this).attr('src', url);
+		}
+	});
+
+	// Tweak the padding on the tagcloud container to cram it in.
+	// Can't do this in CSS as the container has no class or ID.
+	$(".srf-tagcloud").each(function() {
+		$(this).parent().css('padding', '0');
+	});
 	createSHAFlag();
 }

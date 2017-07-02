@@ -62,3 +62,15 @@ body {
 	margin-top: 0.3em;
 	font-size: 20px;
 }
+
+#open_layer_1 { /* Don't show embedded wiki maps */
+	display: none;
+}
+
+.wikitable { /* Don't float wikitables */
+	float:none !important;
+}
+
+.mw-body { /* Remove MW's padding */
+	padding: 0 !important;
+}
