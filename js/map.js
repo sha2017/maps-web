@@ -135,7 +135,7 @@ function createMap(config) {
 		overlay_layers.getLayers().push(layerTile);
 	});
 
-	addVillageLayer();
+	// addVillageLayer();
 
 	// The <canvas> element doesn't seem to get sized correctly
 	// on page load, which causes vector element hover to break.
