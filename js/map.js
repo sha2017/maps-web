@@ -59,6 +59,8 @@ function createMap(config) {
 	
 	$.getJSON('vector_layers.json', addVectorLayers);
 	
+	addGeoLocation(map);
+	
 	config.layers.forEach(function (layer) {
 		var layerTile = new ol.layer.Tile({
 			title: layer.name,
@@ -138,6 +140,93 @@ function addVectorLayers(layer_data) {
 	
 	addPopupActions(map, layer_data);
 }
+
+function addGeoLocation(map) {
+	var geolocation = new ol.Geolocation({ projection: map.getView().getProjection() });
+	geolocation.setTracking(true);
+	
+	var positionFeature = new ol.Feature();
+	positionFeature.setStyle(new ol.style.Style({
+		image: new ol.style.Circle({
+			radius: 6,
+			fill: new ol.style.Fill({ color: '#3399CC' }),
+			stroke: new ol.style.Stroke({ color: '#fff' })
+		})
+	}));
+	geolocation.on('change:position', function() {
+		console.log('Position: ' + geolocation.getPosition());
+		var coordinates = geolocation.getPosition();
+		positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+	});
+	
+	var accuracyFeature = new ol.Feature();
+	geolocation.on('change:accuracyGeometry', function() {
+		console.log('Accuracy: ' + geolocation.getAccuracyGeometry());
+		accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+	});
+	
+	new ol.layer.Vector({
+		map: map,
+		source: new ol.source.Vector({ features: [accuracyFeature, positionFeature] })
+	});
+}
+/*
+      function el(id) {
+        return document.getElementById(id);
+      }
+
+      el('track').addEventListener('change', function() {
+        geolocation.setTracking(this.checked);
+      });
+
+      // update the HTML page when the position changes.
+      geolocation.on('change', function() {
+        el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
+        el('altitude').innerText = geolocation.getAltitude() + ' [m]';
+        el('altitudeAccuracy').innerText = geolocation.getAltitudeAccuracy() + ' [m]';
+        el('heading').innerText = geolocation.getHeading() + ' [rad]';
+        el('speed').innerText = geolocation.getSpeed() + ' [m/s]';
+      });
+
+      // handle geolocation error.
+      geolocation.on('error', function(error) {
+        var info = document.getElementById('info');
+        info.innerHTML = error.message;
+        info.style.display = '';
+      });
+
+      var accuracyFeature = new ol.Feature();
+      geolocation.on('change:accuracyGeometry', function() {
+        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+      });
+
+      var positionFeature = new ol.Feature();
+      positionFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 6,
+          fill: new ol.style.Fill({
+            color: '#3399CC'
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#fff',
+            width: 2
+          })
+        })
+      }));
+
+      geolocation.on('change:position', function() {
+        var coordinates = geolocation.getPosition();
+        positionFeature.setGeometry(coordinates ?
+            new ol.geom.Point(coordinates) : null);
+      });
+
+      new ol.layer.Vector({
+        map: map,
+        source: new ol.source.Vector({
+          features: [accuracyFeature, positionFeature]
+        })
+}
+*/
 
 function addPopupActions(map, layer_data) {
 	// Highlight element on hover:
